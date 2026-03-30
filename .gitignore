@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.env
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.DS_Store
+runs/
+*.coverage
+.vscode/
+.idea/
+
+# Databricks
+.databricks/
+databricks.yml
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Type checking / coverage
+.mypy_cache/
+htmlcov/
+.tox/
+
+# AI rules
+.github/instructions/codacy.instructions.md
