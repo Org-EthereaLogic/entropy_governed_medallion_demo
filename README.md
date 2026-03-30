@@ -1,14 +1,12 @@
 # Entropy-Governed Medallion Pipeline Demo
 
 <p align="center">
-
-[![CI](https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml/badge.svg)](https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/09d6024a36ac43fb9e0e17b13d689d05)](https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard)
-[![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/09d6024a36ac43fb9e0e17b13d689d05)](https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard)
-[![codecov](https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo/graph/badge.svg)](https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo)
-[![Python 3.10 | 3.11 | 3.12](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-
+  <a href="https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml"><img src="https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard"><img src="https://app.codacy.com/project/badge/Grade/09d6024a36ac43fb9e0e17b13d689d05" alt="Codacy Badge"></a>
+  <a href="https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard"><img src="https://app.codacy.com/project/badge/Coverage/09d6024a36ac43fb9e0e17b13d689d05" alt="Codacy Coverage"></a>
+  <a href="https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo"><img src="https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo/graph/badge.svg" alt="codecov"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue" alt="Python 3.10 | 3.11 | 3.12"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
 </p>
 
 **Shannon Entropy as a Data Quality Signal for Databricks Bronze/Silver/Gold**
@@ -24,7 +22,7 @@
 - [Architecture](#architecture)
 - [The Entropy Quality Framework](#the-entropy-quality-framework)
 - [See It in Action](#see-it-in-action)
-- [Gate Evaluation](#gate-evaluation)
+- [Gate Evaluation Matrix](#gate-evaluation-matrix)
 - [Technology Stack](#technology-stack)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)

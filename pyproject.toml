@@ -18,6 +18,9 @@ dev = [
     "pytest-cov>=5.0",
     "ruff>=0.4.0",
 ]
+docs = [
+    "matplotlib>=3.8.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
