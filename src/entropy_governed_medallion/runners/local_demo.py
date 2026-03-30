@@ -10,7 +10,7 @@ Processes sample CSVs through the full pipeline without Spark:
   6. Print a human-readable report
 
 Usage:
-    python -m entropy_governed_medallion.runners.local_demo
+    python -m entropy_governed_medallion.runners
 
 Author: Anthony Johnson | EthereaLogic LLC
 """
@@ -22,7 +22,10 @@ import math
 import subprocess
 import uuid
 from collections import Counter
+from collections.abc import Iterator
+from contextlib import ExitStack, contextmanager
 from datetime import datetime, timezone
+from importlib import resources
 from pathlib import Path
 from typing import Dict, List
 
@@ -37,14 +40,59 @@ from entropy_governed_medallion.entropy.drift_detector import DriftDetector
 from entropy_governed_medallion.gates.evaluator import evaluate_gates
 from entropy_governed_medallion.provenance.builder import build_provenance_envelope
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-SAMPLE_DIR = PROJECT_ROOT / "data" / "sample"
-CONFIG_PATH = PROJECT_ROOT / "config" / "kpi_thresholds.json"
+PACKAGE_RESOURCE_ROOT = "entropy_governed_medallion.resources"
 
 EXCLUDE_COLUMNS = {"employee_id", "first_name", "last_name"}
 
 
 # --- Pure-Python entropy (mirrors shannon.py without PySpark) ---
+
+
+def _detect_repo_root() -> Path | None:
+    candidate = Path(__file__).resolve().parents[3]
+    required_paths = (
+        candidate / "data" / "sample" / "employees_sample.csv",
+        candidate / "data" / "sample" / "employees_drifted.csv",
+        candidate / "config" / "kpi_thresholds.json",
+    )
+    return candidate if all(path.exists() for path in required_paths) else None
+
+
+REPO_ROOT = _detect_repo_root()
+
+
+@contextmanager
+def _resolve_demo_path(
+    repo_parts: tuple[str, ...],
+    package_parts: tuple[str, ...],
+) -> Iterator[Path]:
+    """Yield a repo-relative path when available, else a packaged resource path."""
+    if REPO_ROOT is not None:
+        repo_path = REPO_ROOT.joinpath(*repo_parts)
+        if repo_path.exists():
+            yield repo_path
+            return
+
+    resource = resources.files(PACKAGE_RESOURCE_ROOT)
+    for part in package_parts:
+        resource = resource.joinpath(part)
+
+    with resources.as_file(resource) as packaged_path:
+        yield packaged_path
+
+
+def _sample_csv_path(filename: str):
+    return _resolve_demo_path(
+        repo_parts=("data", "sample", filename),
+        package_parts=("sample", filename),
+    )
+
+
+def _gate_config_path():
+    return _resolve_demo_path(
+        repo_parts=("config", "kpi_thresholds.json"),
+        package_parts=("config", "kpi_thresholds.json"),
+    )
 
 
 def _column_entropy(values: List[str]) -> float:
@@ -130,17 +178,20 @@ def compute_entropy_profile(
 
 def _git_info() -> tuple[str, str]:
     """Return (commit_hash, branch_name), falling back to unknowns."""
+    if REPO_ROOT is None:
+        return "unknown", "unknown"
+
     try:
         commit = subprocess.check_output(
             ["git", "rev-parse", "--short", "HEAD"],
-            cwd=PROJECT_ROOT, stderr=subprocess.DEVNULL,
+            cwd=REPO_ROOT, stderr=subprocess.DEVNULL,
         ).decode().strip()
     except Exception:
         commit = "unknown"
     try:
         branch = subprocess.check_output(
             ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-            cwd=PROJECT_ROOT, stderr=subprocess.DEVNULL,
+            cwd=REPO_ROOT, stderr=subprocess.DEVNULL,
         ).decode().strip()
     except Exception:
         branch = "unknown"
@@ -199,23 +250,33 @@ def run_demo(
     Returns a dict with keys: context, baseline_profile, current_profile,
     health, fidelity, gate_result, provenance.
     """
-    baseline_csv = baseline_path or (SAMPLE_DIR / "employees_sample.csv")
-    current_csv = current_path or (SAMPLE_DIR / "employees_drifted.csv")
-
     started = datetime.now(timezone.utc).isoformat()
     git_commit, git_branch = _git_info()
     run_id = f"local_{uuid.uuid4().hex[:8]}"
 
-    # --- Phase 1: Load data ---
-    baseline_rows = load_csv(baseline_csv)
-    current_rows = load_csv(current_csv)
+    with ExitStack() as stack:
+        baseline_csv = (
+            Path(baseline_path)
+            if baseline_path is not None
+            else stack.enter_context(_sample_csv_path("employees_sample.csv"))
+        )
+        current_csv = (
+            Path(current_path)
+            if current_path is not None
+            else stack.enter_context(_sample_csv_path("employees_drifted.csv"))
+        )
+        config_path = stack.enter_context(_gate_config_path())
 
-    # --- Phase 2: Compute entropy profiles ---
-    baseline_profile = compute_entropy_profile(baseline_rows, EXCLUDE_COLUMNS)
-    current_profile = compute_entropy_profile(current_rows, EXCLUDE_COLUMNS)
+        # --- Phase 1: Load data ---
+        baseline_rows = load_csv(baseline_csv)
+        current_rows = load_csv(current_csv)
 
-    # --- Phase 3: Drift detection ---
-    gate_config_raw = load_gate_config(CONFIG_PATH)
+        # --- Phase 2: Compute entropy profiles ---
+        baseline_profile = compute_entropy_profile(baseline_rows, EXCLUDE_COLUMNS)
+        current_profile = compute_entropy_profile(current_rows, EXCLUDE_COLUMNS)
+
+        # --- Phase 3: Drift detection ---
+        gate_config_raw = load_gate_config(config_path)
     thresholds = {
         "entropy_drop_pct": 0.50,
         "entropy_spike_pct": 0.50,

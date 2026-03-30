@@ -242,15 +242,23 @@ python -m pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-### 3. Run the Entropy Deep Dive in Databricks
+### 3. Run the Local Demo
+
+The package includes a local demo runner that processes the sample CSVs, computes entropy drift, evaluates gates, and prints a human-readable verdict.
+
+```bash
+python -m entropy_governed_medallion.runners
+```
+
+### 4. Run the Entropy Deep Dive in Databricks
 
 Upload `notebooks/04_entropy_deep_dive.py` to your Databricks workspace and run all cells. Uses `samples.nyctaxi.trips` -- no uploads needed.
 
-### 4. Explore Drift Detection
+### 5. Explore Drift Detection
 
 Compare `data/sample/employees_sample.csv` (healthy distribution) against `data/sample/employees_drifted.csv` (collapsed distributions). The entropy framework detects what null checks cannot.
 
-### 5. Regenerate README Visuals
+### 6. Regenerate README Visuals
 
 The README charts are reproducible from the sample CSVs in this repository.
 

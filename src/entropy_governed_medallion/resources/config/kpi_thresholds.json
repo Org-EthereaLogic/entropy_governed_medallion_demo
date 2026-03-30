@@ -1,0 +1,80 @@
+{
+  "experiment_id": "ENTROPY_MEDALLION_DEMO",
+  "schema_variant": "entropy_governed_v1",
+  "gates": [
+    {
+      "metric": "entropy_health_score",
+      "type": "FAIL",
+      "op": ">=",
+      "threshold": 0.70,
+      "reason": "Silver tables must maintain entropy stability above 0.70 before Gold refresh. This prevents distribution drift, cardinality collapse, and silent source failures from reaching executive KPIs."
+    },
+    {
+      "metric": "bronze_record_fidelity_ratio",
+      "type": "FAIL",
+      "op": ">=",
+      "threshold": 0.99,
+      "reason": "Bronze materialization must preserve at least 99% of source records."
+    },
+    {
+      "metric": "silver_quality_pass_ratio",
+      "type": "FAIL",
+      "op": ">=",
+      "threshold": 0.95,
+      "reason": "At least 95% of Silver records must pass rule-based quality checks."
+    },
+    {
+      "metric": "provenance_field_coverage",
+      "type": "FAIL",
+      "op": ">=",
+      "threshold": 1.0,
+      "reason": "All required provenance fields must be emitted for every executed run."
+    },
+    {
+      "metric": "entropy_columns_drifted_ratio",
+      "type": "WARN",
+      "op": "<=",
+      "threshold": 0.20,
+      "reason": "No more than 20% of monitored columns should show entropy drift in a single load cycle."
+    },
+    {
+      "metric": "silver_quarantine_ratio",
+      "type": "WARN",
+      "op": "<=",
+      "threshold": 0.10,
+      "reason": "Quarantined records should not exceed 10% of total Silver input."
+    }
+  ],
+  "guardrails": {
+    "execution_mode": "demo_workspace_only",
+    "allowed_catalog_tiers": ["demo_dev", "sandbox", "dev"],
+    "require_unity_catalog": true,
+    "entropy_baseline_required_before_gold": true,
+    "drift_detection_columns_excluded": [
+      "source_system",
+      "source_file_path",
+      "ingest_ts"
+    ]
+  },
+  "entropy_thresholds": {
+    "collapse_pct": 0.50,
+    "spike_pct": 0.50,
+    "health_score_floor": 0.70,
+    "baseline_staleness_days": 30
+  },
+  "decision_rule": {
+    "pass": "All FAIL gates pass and no WARN gate breaches.",
+    "warn": "All FAIL gates pass but one or more WARN gates breach.",
+    "fail": "Any FAIL gate breach or missing entropy baseline.",
+    "gold_blocked": "Gold refresh is blocked when entropy_health_score < 0.70."
+  },
+  "minimum_provenance_fields": [
+    "experiment_id",
+    "run_id",
+    "git_commit",
+    "git_branch",
+    "catalog_name",
+    "operator",
+    "started_at_utc"
+  ]
+}

@@ -7,8 +7,11 @@ and verifies the full pipeline produces correct structured results.
 Author: Anthony Johnson | EthereaLogic LLC
 """
 
+import subprocess
+import sys
 from pathlib import Path
 
+import entropy_governed_medallion.runners.local_demo as local_demo
 from entropy_governed_medallion.config import load_gate_config
 from entropy_governed_medallion.contracts import (
     FidelityResult,
@@ -274,3 +277,38 @@ class TestRunDemoFunction:
     def test_run_demo_health_below_threshold(self):
         results = run_demo()
         assert results["health"].health_score < 0.70
+
+
+class TestBundledResources:
+    """Bundled resources must be usable outside a repo checkout."""
+
+    def test_bundled_sample_csv_available_without_repo_root(self, monkeypatch):
+        monkeypatch.setattr(local_demo, "REPO_ROOT", None)
+        with local_demo._sample_csv_path("employees_sample.csv") as path:
+            rows = load_csv(path)
+        assert len(rows) == 25
+
+    def test_bundled_gate_config_available_without_repo_root(self, monkeypatch):
+        monkeypatch.setattr(local_demo, "REPO_ROOT", None)
+        with local_demo._gate_config_path() as path:
+            config = load_gate_config(path)
+        assert any(g.metric == "entropy_health_score" for g in config.gates)
+
+
+class TestRunnerExecution:
+    """The documented runner commands should execute without warnings."""
+
+    def test_local_demo_module_runs_without_runtime_warning(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-W",
+                "error",
+                "-m",
+                "entropy_governed_medallion.runners.local_demo",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode == 0, result.stderr
