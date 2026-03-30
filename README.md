@@ -1,5 +1,12 @@
 # Entropy-Governed Medallion Pipeline Demo
 
+[![CI](https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml/badge.svg)](https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/actions/workflows/ci.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/09d6024a36ac43fb9e0e17b13d689d05)](https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard)
+[![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/09d6024a36ac43fb9e0e17b13d689d05)](https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo/dashboard)
+[![codecov](https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo/graph/badge.svg)](https://codecov.io/gh/Org-EthereaLogic/entropy_governed_medallion_demo)
+[![Python 3.10 | 3.11 | 3.12](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 ## Shannon Entropy as a Data Quality Signal for Databricks Bronze/Silver/Gold
 
 **Built by [Anthony Johnson](https://www.linkedin.com/in/anthonyjohnsonii/) | EthereaLogic LLC**
