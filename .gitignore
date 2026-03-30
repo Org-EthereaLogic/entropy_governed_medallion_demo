@@ -28,6 +28,7 @@ databricks.yml
 .mypy_cache/
 htmlcov/
 .tox/
+.codacy/
 
 # Codacy CLI local artifacts
 .codacy/logs/
