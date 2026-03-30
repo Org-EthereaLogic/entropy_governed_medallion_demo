@@ -1,0 +1,33 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Force LF for source files
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.gif binary
+*.whl binary
+
+# GitHub Linguist overrides
+*.md linguist-documentation
+*.csv linguist-data
+docs/** linguist-documentation
+notebooks/** linguist-documentation
+
+# Exclude from git archive / GitHub source downloads
+.github/ export-ignore
+.codacy/ export-ignore
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+CLAUDE.md export-ignore

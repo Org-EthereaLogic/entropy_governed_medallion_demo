@@ -8,9 +8,37 @@ authors = [
     { name = "Anthony Johnson", email = "anthony@etherealogic.com" },
 ]
 requires-python = ">=3.10"
+keywords = [
+    "databricks",
+    "data-quality",
+    "entropy",
+    "shannon-entropy",
+    "medallion-architecture",
+    "drift-detection",
+    "data-governance",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
+]
 dependencies = [
     "pyspark>=3.5.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo"
+Repository = "https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo"
+Issues = "https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/issues"
+Changelog = "https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
