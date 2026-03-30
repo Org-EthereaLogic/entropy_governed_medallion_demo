@@ -29,5 +29,8 @@ databricks.yml
 htmlcov/
 .tox/
 
+# Codacy CLI local artifacts
+.codacy/logs/
+
 # AI rules
 .github/instructions/codacy.instructions.md

@@ -1,6 +1,6 @@
 # Entropy-Governed Medallion Pipeline Demo
 
-### Shannon Entropy as a Data Quality Signal for Databricks Bronze/Silver/Gold
+## Shannon Entropy as a Data Quality Signal for Databricks Bronze/Silver/Gold
 
 **Built by [Anthony Johnson](https://www.linkedin.com/in/anthonyjohnsonii/) | EthereaLogic LLC**
 
@@ -18,7 +18,7 @@ A column that passes every null check and type check can still be useless if its
 
 ## Architecture
 
-```
+```text
 Source Systems ──► Landing Zone ──► Bronze ──► Silver ──► Gold ──► Dashboards / AI
    (Raw Files)      (ADLS Gen2)     (Raw       (Clean     (KPI
                                      Delta)     Delta)     Tables)
@@ -39,12 +39,12 @@ Source Systems ──► Landing Zone ──► Bronze ──► Silver ──�
 
 Shannon Entropy (H) measures the information content of a data column's value distribution:
 
-```
+```text
 H(X) = -Σ p(xᵢ) × log₂(p(xᵢ))
 ```
 
 | Entropy Level | What It Means | Data Quality Signal |
-|--------------|---------------|-------------------|
+| ------------- | ------------- | ------------------- |
 | H = 0 | All values identical | Column is constant — possible upstream failure |
 | H is low | Few dominant values | Low cardinality — check whether expected |
 | H is moderate | Balanced distribution | Healthy variability |
@@ -69,7 +69,7 @@ H(X) = -Σ p(xᵢ) × log₂(p(xᵢ))
 ## Technology Stack
 
 | Component | Technology |
-|-----------|-----------|
+| --------- | ---------- |
 | Processing Engine | Azure Databricks (Spark) |
 | Storage Format | Delta Lake |
 | Languages | PySpark, SQL |
@@ -83,7 +83,7 @@ H(X) = -Σ p(xᵢ) × log₂(p(xᵢ))
 
 ## Project Structure
 
-```
+```text
 entropy_governed_medallion_demo/
 ├── README.md
 ├── LICENSE
@@ -127,29 +127,39 @@ entropy_governed_medallion_demo/
 ## Quick Start
 
 ### 1. Clone and Install
+
 ```bash
 git clone https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo.git
-cd entropy-governed-medallion-demo
+cd entropy_governed_medallion_demo
 pip install -e ".[dev]"
 ```
 
 ### 2. Run Tests Locally
+
 ```bash
 pytest tests/ -v
 ```
 
 ### 3. Run the Entropy Deep Dive in Databricks
+
 Upload `notebooks/04_entropy_deep_dive.py` to your Databricks workspace and run all cells. Uses `samples.nyctaxi.trips` — no uploads needed.
 
 ### 4. Explore Drift Detection
+
 Compare `data/sample/employees_sample.csv` (healthy distribution) against `data/sample/employees_drifted.csv` (collapsed distributions). The entropy framework detects what null checks cannot.
+
+## Contributing and Security
+
+Contributions should preserve the repository's public-safe constraints, typed-contract architecture, and Shannon Entropy governance model. Follow the contribution workflow and conventional commit rules in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+If you discover a security issue, report it privately using the process in [SECURITY.md](SECURITY.md). Do not open public issues for sensitive disclosures.
 
 ---
 
 ## Gate Definitions
 
 | Gate | Type | Threshold | What It Protects Against |
-|------|------|-----------|------------------------|
+| ---- | ---- | --------- | ------------------------ |
 | `entropy_health_score` | FAIL | >= 0.70 | Distribution drift reaching Gold |
 | `bronze_record_fidelity_ratio` | FAIL | >= 0.99 | Row loss during ingestion |
 | `silver_quality_pass_ratio` | FAIL | >= 0.95 | Data quality rule failures |
