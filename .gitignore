@@ -28,10 +28,11 @@ databricks.yml
 .mypy_cache/
 htmlcov/
 .tox/
-.codacy/
+coverage.xml
 
-# Codacy CLI local artifacts
-.codacy/logs/
+# Codacy local cache and generated artifacts. The committed repo config lives
+# at the root as .codacy.yaml.
+.codacy/
 
 # AI rules
 .github/instructions/codacy.instructions.md

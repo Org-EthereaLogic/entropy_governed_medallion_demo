@@ -78,6 +78,14 @@ H(X) = -Σ p(xᵢ) × log₂(p(xᵢ))
 | Gate Evaluation | Frozen KPI thresholds with typed contracts |
 | Testing | pytest |
 | Deployment | Databricks Asset Bundles |
+| Automation | GitHub Actions CI + GitHub release artifacts |
+
+## Automation
+
+- **CI:** GitHub Actions runs `pytest` and `ruff` across Python 3.10, 3.11, and 3.12 on pushes and pull requests.
+- **Commit validation:** Commitizen enforces Conventional Commits in pull requests and direct pushes.
+- **Codacy coverage:** Push builds generate `coverage.xml` and upload it to Codacy when `CODACY_PROJECT_TOKEN` is configured in GitHub Actions secrets.
+- **Release delivery:** Version tags and manual dispatches build wheel and source distributions, upload them as workflow artifacts, and publish GitHub release assets on tag pushes.
 
 ---
 

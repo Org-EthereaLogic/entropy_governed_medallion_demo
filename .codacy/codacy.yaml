@@ -1,5 +1,0 @@
-tools:
-    - opengrep@1.16.4
-    - pylint@3.3.9
-    - trivy@0.69.3
-1

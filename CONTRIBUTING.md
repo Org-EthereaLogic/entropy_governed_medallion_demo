@@ -21,7 +21,7 @@ pip install -e ".[dev]"
 Run these commands before opening a pull request:
 
 ```bash
-pytest tests/ -v
+pytest tests/ -v --cov=entropy_governed_medallion --cov-report=xml
 ruff check src/ tests/
 ```
 
