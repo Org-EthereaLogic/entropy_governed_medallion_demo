@@ -225,10 +225,15 @@ The gate evaluator checks six quality thresholds before allowing a Gold table re
 
 ### 1. Clone and Install
 
+Use Python 3.10 or newer. The commands below use `python3.12`; replace it with `python3.10` or `python3.11` if that is the supported interpreter installed on your machine.
+
 ```bash
 git clone https://github.com/Org-EthereaLogic/entropy_governed_medallion_demo.git
 cd entropy_governed_medallion_demo
-pip install -e ".[dev]"
+python3.12 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 ```
 
 ### 2. Run Tests Locally
@@ -244,6 +249,16 @@ Upload `notebooks/04_entropy_deep_dive.py` to your Databricks workspace and run 
 ### 4. Explore Drift Detection
 
 Compare `data/sample/employees_sample.csv` (healthy distribution) against `data/sample/employees_drifted.csv` (collapsed distributions). The entropy framework detects what null checks cannot.
+
+### 5. Regenerate README Visuals
+
+The README charts are reproducible from the sample CSVs in this repository.
+
+```bash
+. .venv/bin/activate
+python -m pip install -e ".[docs]"
+python docs/generate_visuals.py
+```
 
 ---
 

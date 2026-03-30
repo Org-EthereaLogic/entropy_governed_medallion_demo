@@ -39,7 +39,10 @@ Seam-based, typed-contract architecture with Shannon Entropy governance:
 ## Common Commands
 
 ```bash
-pip install -e ".[dev]"
+python3.12 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 pytest tests/ -v
 ruff check src/ tests/
 ```

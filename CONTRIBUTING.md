@@ -12,8 +12,13 @@ Do not introduce:
 
 ## Local Setup
 
+Use Python 3.10 or newer. The example below uses `python3.12`; replace it with `python3.10` or `python3.11` if that is the supported interpreter installed on your machine.
+
 ```bash
-pip install -e ".[dev]"
+python3.12 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 ```
 
 ## Required Validation
