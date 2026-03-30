@@ -1,5 +1,7 @@
 # Entropy-Governed Medallion Pipeline Demo
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b54cc20c639d453d80600a81f1202497)](https://app.codacy.com/gh/Org-EthereaLogic/entropy_governed_medallion_demo?utm_source=github.com&utm_medium=referral&utm_content=Org-EthereaLogic/entropy_governed_medallion_demo&utm_campaign=Badge_Grade)
+
 ## Shannon Entropy as a Data Quality Signal for Databricks Bronze/Silver/Gold
 
 **Built by [Anthony Johnson](https://www.linkedin.com/in/anthonyjohnsonii/) | EthereaLogic LLC**
