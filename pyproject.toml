@@ -42,16 +42,6 @@ tag_format = "$version"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/entropy_governed_medallion"]
-include = [
-    "src/entropy_governed_medallion/resources/**/*.csv",
-    "src/entropy_governed_medallion/resources/**/*.json",
-]
-
-[tool.hatch.build.targets.sdist]
-include = [
-    "src/entropy_governed_medallion/resources/**/*.csv",
-    "src/entropy_governed_medallion/resources/**/*.json",
-]
 
 [build-system]
 requires = ["hatchling"]
