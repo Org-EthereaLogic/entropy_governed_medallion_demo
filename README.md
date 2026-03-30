@@ -182,7 +182,7 @@ Both datasets pass null checks, type checks, and deduplication. Only entropy mea
 
 ### Entropy Health Dashboard
 
-A per-column view of information content. The baseline (Week 1) shows healthy distribution across all columns. After a simulated source failure (Week 4), four columns drop to zero entropy -- the health score falls from 1.00 to 0.50, triggering a gate failure.
+A per-column view of information content. The baseline (Week 1) shows healthy distribution across all columns. After a simulated source failure (Week 4), four of five monitored columns drop to zero entropy -- the health score falls from 1.00 to 0.20, triggering a gate failure.
 
 <p align="center">
   <img src="docs/images/health_dashboard.png" alt="Entropy health dashboard comparing baseline and drifted column entropy" width="900"/>
@@ -190,7 +190,7 @@ A per-column view of information content. The baseline (Week 1) shows healthy di
 
 ### Gate Evaluation Matrix
 
-The gate evaluator checks six quality thresholds before allowing a Gold table refresh. Even though five of six gates pass, the entropy health score failure blocks the entire pipeline -- preventing corrupted data from reaching executive dashboards.
+The gate evaluator checks six quality thresholds before allowing a Gold table refresh. Four of six gates pass, but both entropy gates fail -- the health score FAIL gate (0.20 < 0.70) and the columns-drifted WARN gate (80% > 20%) -- blocking the entire pipeline and preventing corrupted data from reaching executive dashboards.
 
 <p align="center">
   <img src="docs/images/gate_evaluation.png" alt="Gate evaluation matrix showing entropy health score failure blocking Gold refresh" width="800"/>

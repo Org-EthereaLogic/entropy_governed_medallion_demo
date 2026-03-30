@@ -24,11 +24,20 @@ databricks.yml
 # Logs
 *.log
 
-# Type checking / coverage
+# Type checking / coverage / test tooling
 .mypy_cache/
 htmlcov/
 .tox/
+.nox/
+.hypothesis/
 coverage.xml
+
+# Packaging artifacts
+.eggs/
+pip-wheel-metadata/
+
+# Environment variants
+.env.*
 
 # Codacy local cache and generated artifacts. The committed repo config lives
 # at the root as .codacy.yaml.
