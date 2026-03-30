@@ -30,6 +30,12 @@ src = ["src"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = ["pyproject.toml:version"]
+tag_format = "$version"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/entropy_governed_medallion"]
 
