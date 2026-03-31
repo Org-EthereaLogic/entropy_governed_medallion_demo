@@ -31,7 +31,7 @@ The measured local demo run in this repository produces the following verified o
 | Health score deterioration | The score drops from `1.00` on the baseline to `0.20` on the drifted load. |
 | Publication decision | Overall verdict is `FAIL`; Gold refresh is blocked. |
 | Record fidelity retained | Source rows: `25`; target rows: `25`; schema match: `True`. |
-| Regression coverage | `PYTHONPATH=src pytest tests/ -q` completes with `40 passed`. |
+| Regression coverage | Test suite (`pytest tests/ -v`) completes successfully. |
 
 ## Verified Results
 
