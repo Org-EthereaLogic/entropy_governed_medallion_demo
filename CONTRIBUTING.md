@@ -2,7 +2,7 @@
 
 ## Scope
 
-This repository is a public demonstration of Shannon Entropy-governed data quality patterns for Databricks medallion architecture. Every contribution must remain safe for public GitHub.
+This repository is a public demonstration of a Databricks release-control pattern that blocks silent data drift before KPI publication. Every contribution must remain safe for public GitHub and keep public-facing claims tied to reproducible evidence.
 
 Do not introduce:
 
@@ -26,8 +26,8 @@ python -m pip install -e ".[dev]"
 Run these commands before opening a pull request:
 
 ```bash
-pytest tests/ -v --cov=entropy_governed_medallion --cov-report=xml
-ruff check src/ tests/
+PYTHONPATH=src pytest tests/ -q
+ruff check src tests docs
 ```
 
 ## Commit Convention
@@ -58,4 +58,4 @@ Each pull request should:
 - Explain the user-visible or architectural impact
 - Include the validation commands you ran
 - Keep the change set narrowly scoped
-- Preserve the typed-contract and seam-based design patterns already in use
+- Preserve the release-control, evidence-traceability, and auditability patterns already in use
