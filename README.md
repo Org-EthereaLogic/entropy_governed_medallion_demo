@@ -101,11 +101,7 @@ python -m pip install -e ".[dev]"
 pytest tests/ -v --cov=entropy_governed_medallion
 ```
 
-Expected result:
-
-```text
-40 passed
-```
+Expected result: all tests pass and a coverage report is printed to the terminal.
 
 ### 3. Run the local release-control demo
 
