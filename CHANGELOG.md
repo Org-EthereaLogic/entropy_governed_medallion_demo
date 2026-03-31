@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [Unreleased]
+
+### Changed
+
+- Reframed the public documentation for technology leaders, with an executive-first README, a dedicated technical appendix, and exhibit-style visuals tied to measured demo results.
+- Aligned public metadata and support/contribution copy around the repository's core control pattern: blocking silent data drift before KPI publication while preserving auditability.
+
 ## [0.1.0] - 2026-03-30
 
 ### Added
@@ -19,12 +26,11 @@ This project adheres to [Conventional Commits](https://www.conventionalcommits.o
 - Bundled package resources for non-editable installs (`resources/`).
 - Sample datasets: healthy baseline and drifted distributions (`data/sample/`).
 - Databricks notebook for interactive entropy exploration (`notebooks/04_entropy_deep_dive.py`).
-- Visualization generator for README charts (`docs/generate_visuals.py`).
-- Unit tests for drift detection and gate evaluation (19 tests).
-- Integration tests covering the full end-to-end pipeline (15 tests).
+- Visualization generator for README charts sourced from measured demo outputs (`docs/generate_visuals.py`).
+- Unit and integration tests covering drift detection, gate evaluation, packaged resources, and end-to-end demo execution.
 - GitHub Actions CI with Python 3.10/3.11/3.12 matrix, Codecov, and Codacy integration.
 - Conventional Commits validation workflow.
 - Release workflow building and publishing wheel/sdist artifacts.
 - Makefile with `install`, `dev`, `test`, `lint`, `demo`, `visuals`, and `clean` targets.
-- README with architecture diagrams, theory explanation, visualizations, and Quick Start.
+- README, technical appendix, visualizations, and Quick Start for the public demonstration.
 - CONTRIBUTING, SECURITY, and LICENSE (MIT) documentation.
