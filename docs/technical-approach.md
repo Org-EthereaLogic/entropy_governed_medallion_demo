@@ -68,7 +68,7 @@ flowchart LR
 The stability signal in this demo is Shannon entropy, which measures how diverse a column's value distribution is:
 
 ```text
-H(X) = -Sigma p(xi) x log2(p(xi))
+H(X) = −Σ p(xᵢ) × log₂(p(xᵢ))
 ```
 
 Plain-language interpretation:
