@@ -95,6 +95,16 @@ def _gate_config_path():
     )
 
 
+def _detector_kwargs(gate_config) -> dict[str, float]:
+    """Map config entropy thresholds to DriftDetector kwargs."""
+    thresholds = gate_config.entropy_thresholds
+    return {
+        "entropy_drop_pct": thresholds.collapse_pct,
+        "entropy_spike_pct": thresholds.spike_pct,
+        "health_score_floor": thresholds.health_score_floor,
+    }
+
+
 def _column_entropy(values: List[str]) -> float:
     """Compute Shannon Entropy H(X) for a list of values."""
     n = len(values)
@@ -277,74 +287,70 @@ def run_demo(
 
         # --- Phase 3: Drift detection ---
         gate_config_raw = load_gate_config(config_path)
-    thresholds = {
-        "entropy_drop_pct": 0.50,
-        "entropy_spike_pct": 0.50,
-        "health_score_floor": 0.70,
-    }
-    detector = DriftDetector(**thresholds)
-    health = detector.compute_table_health(baseline_profile, current_profile)
 
-    # --- Phase 4: Fidelity ---
-    fidelity = FidelityResult(
-        source_row_count=len(baseline_rows),
-        target_row_count=len(current_rows),
-        row_count_ratio=round(len(current_rows) / len(baseline_rows), 4)
-        if baseline_rows else None,
-        columns_match=set(baseline_rows[0].keys()) == set(current_rows[0].keys())
-        if baseline_rows and current_rows else None,
-    )
+        detector = DriftDetector(**_detector_kwargs(gate_config_raw))
+        health = detector.compute_table_health(baseline_profile, current_profile)
 
-    # --- Phase 5: Gate evaluation ---
-    context = RunContext(
-        experiment_id="ENTROPY_MEDALLION_DEMO",
-        run_id=run_id,
-        git_commit=git_commit,
-        git_branch=git_branch,
-        operator="local_demo",
-        started_at_utc=started,
-        dry_run=False,
-    )
+        # --- Phase 4: Fidelity ---
+        fidelity = FidelityResult(
+            source_row_count=len(baseline_rows),
+            target_row_count=len(current_rows),
+            row_count_ratio=round(len(current_rows) / len(baseline_rows), 4)
+            if baseline_rows else None,
+            columns_match=set(baseline_rows[0].keys()) == set(current_rows[0].keys())
+            if baseline_rows and current_rows else None,
+        )
 
-    # Build a TableHealthResult contract for the gate evaluator
-    health_contract = TableHealthResult(
-        health_score=health.health_score,
-        passed_gate=health.passed_gate,
-        total_columns_checked=health.total_columns_checked,
-        columns_drifted=health.columns_drifted,
-        flagged_columns=health.flagged_columns,
-        column_details=health.column_details,
-    )
+        # --- Phase 5: Gate evaluation ---
+        context = RunContext(
+            experiment_id="ENTROPY_MEDALLION_DEMO",
+            run_id=run_id,
+            git_commit=git_commit,
+            git_branch=git_branch,
+            operator="local_demo",
+            started_at_utc=started,
+            dry_run=False,
+        )
 
-    completed = datetime.now(timezone.utc).isoformat()
-    provenance = build_provenance_envelope(
-        context=context,
-        status=RunStatus.EXECUTION_COMPLETED,
-        completed_at_utc=completed,
-        catalog_name="local_demo",
-        entropy_health=health_contract,
-        tables_processed=("employees",),
-    )
+        # Build a TableHealthResult contract for the gate evaluator
+        health_contract = TableHealthResult(
+            health_score=health.health_score,
+            passed_gate=health.passed_gate,
+            total_columns_checked=health.total_columns_checked,
+            columns_drifted=health.columns_drifted,
+            flagged_columns=health.flagged_columns,
+            column_details=health.column_details,
+        )
 
-    gate_result = evaluate_gates(
-        gate_config=gate_config_raw,
-        context=context,
-        entropy_health=health_contract,
-        fidelity=fidelity,
-        provenance=provenance,
-        quality_pass_ratio=1.0,
-        silver_quarantine_ratio=0.0,
-    )
+        completed = datetime.now(timezone.utc).isoformat()
+        provenance = build_provenance_envelope(
+            context=context,
+            status=RunStatus.EXECUTION_COMPLETED,
+            completed_at_utc=completed,
+            catalog_name="local_demo",
+            entropy_health=health_contract,
+            tables_processed=("employees",),
+        )
 
-    return {
-        "context": context,
-        "baseline_profile": baseline_profile,
-        "current_profile": current_profile,
-        "health": health,
-        "fidelity": fidelity,
-        "gate_result": gate_result,
-        "provenance": provenance,
-    }
+        gate_result = evaluate_gates(
+            gate_config=gate_config_raw,
+            context=context,
+            entropy_health=health_contract,
+            fidelity=fidelity,
+            provenance=provenance,
+            quality_pass_ratio=1.0,
+            silver_quarantine_ratio=0.0,
+        )
+
+        return {
+            "context": context,
+            "baseline_profile": baseline_profile,
+            "current_profile": current_profile,
+            "health": health,
+            "fidelity": fidelity,
+            "gate_result": gate_result,
+            "provenance": provenance,
+        }
 
 
 def main() -> None:

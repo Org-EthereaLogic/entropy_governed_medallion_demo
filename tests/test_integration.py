@@ -7,8 +7,11 @@ and verifies the full pipeline produces correct structured results.
 Author: Anthony Johnson | EthereaLogic LLC
 """
 
+import importlib.util
+import json
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 import entropy_governed_medallion.runners.local_demo as local_demo
@@ -32,6 +35,17 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_DIR = PROJECT_ROOT / "data" / "sample"
 CONFIG_PATH = PROJECT_ROOT / "config" / "kpi_thresholds.json"
 EXCLUDE_COLUMNS = {"employee_id", "first_name", "last_name"}
+
+
+def _load_visuals_module():
+    spec = importlib.util.spec_from_file_location(
+        "generate_visuals",
+        PROJECT_ROOT / "docs" / "generate_visuals.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
 
 
 class TestCSVLoading:
@@ -278,6 +292,24 @@ class TestRunDemoFunction:
         results = run_demo()
         assert results["health"].health_score < 0.70
 
+    def test_run_demo_uses_entropy_thresholds_from_config(self, tmp_path, monkeypatch):
+        custom_config = json.loads(CONFIG_PATH.read_text())
+        custom_config["entropy_thresholds"]["health_score_floor"] = 0.10
+
+        custom_path = tmp_path / "kpi_thresholds.json"
+        custom_path.write_text(json.dumps(custom_config))
+
+        @contextmanager
+        def custom_gate_config_path():
+            yield custom_path
+
+        monkeypatch.setattr(local_demo, "_gate_config_path", custom_gate_config_path)
+
+        results = run_demo()
+
+        assert results["health"].health_score == 0.2
+        assert results["health"].passed_gate is True
+
 
 class TestBundledResources:
     """Bundled resources must be usable outside a repo checkout."""
@@ -312,3 +344,77 @@ class TestRunnerExecution:
             check=False,
         )
         assert result.returncode == 0, result.stderr
+
+
+class TestDocumentationVisuals:
+    """README visuals should reflect the same measured demo outputs."""
+
+    def test_visual_metrics_match_local_demo_measurements(self):
+        visuals = _load_visuals_module()
+        metrics = visuals.build_visual_metrics()
+        results = run_demo()
+
+        monitored_columns = [profile["column_name"] for profile in results["baseline_profile"]]
+        assert metrics["monitored_columns"] == monitored_columns
+        assert metrics["baseline_health_score"] == 1.0
+        assert metrics["current_health_score"] == results["health"].health_score
+
+        gate_metrics = {gate["metric"]: gate for gate in metrics["gates"]}
+        gate_evaluations = {
+            evaluation.metric: evaluation for evaluation in results["gate_result"].evaluations
+        }
+
+        assert gate_metrics["entropy_health_score"]["measured"] == gate_evaluations[
+            "entropy_health_score"
+        ].measured_value
+        assert gate_metrics["entropy_columns_drifted_ratio"]["measured"] == gate_evaluations[
+            "entropy_columns_drifted_ratio"
+        ].measured_value
+
+
+class TestTypedConfigContract:
+    """Typed config contracts must round-trip through the JSON loader."""
+
+    def test_loaded_config_has_typed_entropy_thresholds(self):
+        from entropy_governed_medallion.contracts import EntropyThresholds
+
+        config = load_gate_config(CONFIG_PATH)
+        assert isinstance(config.entropy_thresholds, EntropyThresholds)
+        assert config.entropy_thresholds.collapse_pct == 0.50
+        assert config.entropy_thresholds.spike_pct == 0.50
+        assert config.entropy_thresholds.health_score_floor == 0.70
+        assert config.entropy_thresholds.baseline_staleness_days == 30
+
+    def test_loaded_config_has_typed_guardrails(self):
+        from entropy_governed_medallion.contracts import Guardrails
+
+        config = load_gate_config(CONFIG_PATH)
+        assert isinstance(config.guardrails, Guardrails)
+        assert config.guardrails.execution_mode == "demo_workspace_only"
+        assert config.guardrails.require_unity_catalog is True
+        assert "source_system" in config.guardrails.drift_detection_columns_excluded
+
+    def test_loaded_config_has_typed_decision_rule(self):
+        from entropy_governed_medallion.contracts import DecisionRule
+
+        config = load_gate_config(CONFIG_PATH)
+        assert isinstance(config.decision_rule, DecisionRule)
+        assert config.decision_rule.pass_rule != ""
+        assert config.decision_rule.gold_blocked != ""
+
+    def test_minimal_json_uses_typed_defaults(self, tmp_path):
+        """A JSON with only gates should produce default typed sub-contracts."""
+        from entropy_governed_medallion.contracts import (
+            DecisionRule,
+            EntropyThresholds,
+            Guardrails,
+        )
+
+        minimal = {"gates": []}
+        path = tmp_path / "minimal.json"
+        path.write_text(json.dumps(minimal))
+        config = load_gate_config(path)
+        assert isinstance(config.entropy_thresholds, EntropyThresholds)
+        assert config.entropy_thresholds.collapse_pct == 0.50
+        assert isinstance(config.guardrails, Guardrails)
+        assert isinstance(config.decision_rule, DecisionRule)

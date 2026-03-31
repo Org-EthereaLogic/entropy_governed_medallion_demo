@@ -209,10 +209,39 @@ class GateDefinition:
 
 
 @dataclass(frozen=True)
+class EntropyThresholds:
+    """Typed thresholds governing drift-detection sensitivity."""
+    collapse_pct: float = 0.50
+    spike_pct: float = 0.50
+    health_score_floor: float = 0.70
+    baseline_staleness_days: int = 30
+
+
+@dataclass(frozen=True)
+class Guardrails:
+    """Typed execution guardrails loaded from kpi_thresholds.json."""
+    execution_mode: str = "demo_workspace_only"
+    allowed_catalog_tiers: tuple[str, ...] = ("dev",)
+    require_unity_catalog: bool = True
+    entropy_baseline_required_before_gold: bool = True
+    drift_detection_columns_excluded: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class DecisionRule:
+    """Human-readable descriptions for each verdict outcome."""
+    pass_rule: str = ""
+    warn: str = ""
+    fail: str = ""
+    gold_blocked: str = ""
+
+
+@dataclass(frozen=True)
 class EntropyGateConfig:
     gates: tuple[GateDefinition, ...]
-    guardrails: dict = field(default_factory=dict)
-    decision_rule: dict = field(default_factory=dict)
+    entropy_thresholds: EntropyThresholds = field(default_factory=EntropyThresholds)
+    guardrails: Guardrails = field(default_factory=Guardrails)
+    decision_rule: DecisionRule = field(default_factory=DecisionRule)
 
 
 @dataclass(frozen=True)
