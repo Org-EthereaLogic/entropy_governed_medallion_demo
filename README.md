@@ -98,7 +98,7 @@ python -m pip install -e ".[dev]"
 ### 2. Run the regression suite
 
 ```bash
-PYTHONPATH=src pytest tests/ -q
+pytest tests/ -v --cov=entropy_governed_medallion
 ```
 
 Expected result:
