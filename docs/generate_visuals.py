@@ -10,10 +10,6 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-from entropy_governed_medallion.runners.local_demo import run_demo
 
 OUTPUT_DIR = Path(__file__).parent / "images"
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -42,6 +38,15 @@ def _load_plotting():
     from matplotlib.gridspec import GridSpec
 
     return plt, GridSpec
+
+
+def _run_demo():
+    if str(SRC_DIR) not in sys.path:
+        sys.path.insert(0, str(SRC_DIR))
+
+    from entropy_governed_medallion.runners.local_demo import run_demo
+
+    return run_demo()
 
 
 def compute_entropy(values: list[str]) -> float:
@@ -96,7 +101,7 @@ def _gate_outcome_text(verdict: str) -> str:
 
 def build_visual_metrics() -> dict:
     """Return the measured demo outputs used by the README visuals."""
-    results = run_demo()
+    results = _run_demo()
     monitored_columns = [profile["column_name"] for profile in results["baseline_profile"]]
     baseline_profile = {
         profile["column_name"]: profile for profile in results["baseline_profile"]

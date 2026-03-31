@@ -1,7 +1,7 @@
 [project]
 name = "entropy-governed-medallion-demo"
 version = "0.1.0"
-description = "Entropy-governed Bronze/Silver/Gold medallion pipeline demo for Azure Databricks"
+description = "Databricks release-control demo for blocking silent data drift before KPI publication"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
